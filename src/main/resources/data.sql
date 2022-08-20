@@ -1,0 +1,1 @@
+insert into orders(status) values (1);
