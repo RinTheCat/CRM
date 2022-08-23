@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+            font-family: sans-serif;
+        }
+
+        h3 {
+            color: darkred;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<form id="edit-form" th:object="${order}">
+    <div class="row">
+        <label for="id-input">Номер заказа:</label>
+        <input id="id-input" type="text" readonly="readonly" value="1" th:value="*{id}"/>
+    </div>
+
+    <div class="row">
+        <label>Статус:</label>
+        <button id="pullStatus">Назад</button>
+        <span th:text="*{status}"></span>
+        <button id="pushStatus">Вперед</button>
+        <button id="cancel">Отменить</button>
+    </div>
+
+    <div class="row">
+        <label>КМ:</label>
+        <select id="selectUser"></select>
+<!--        <input id="user-input" name="user" type="text" value="Колобок" th:value="*{user}"/>-->
+    </div>
+
+    <div class="row">
+        <label>Client:</label>
+        <select id="selectClient"></select>
+<!--        <input id="client-input" name="client" type="text" value="Колобок" th:value="*{client}"/>-->
+    </div>
+
+    <div class="row">
+        <button type="submit">Save</button>
+    </div>
+</form>
+<h3>Comments Info:</h3>
+<table th:object="${order}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Edit text</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="comment : *{comments}">
+        <td th:text="${comment.id}">1</td>
+        <td>
+            <form action="editBook.html" th:method="post" th:action="@{/comment/edit/{id}(id = ${comment.id})}" >
+                <input name="text" type="text" value="Понравилось" th:value="${comment.text}"/>
+                <button type="submit">Save</button>
+            </form>
+        </td>
+        <td>
+            <a href="editBook.html" th:href="@{/comments/delete/{id}(id = ${comment.id})}"><button type="button">Delete</button></a>
+        </td>
+    </tr>
+    <tr>
+        <td>new</td>
+        <td>
+            <form action="editBook.html" th:method="post" th:action="@{/comments/create}" >
+                <input name="text" type="text"/>
+                <input name="bookId" type="hidden" th:value="*{id}"/>
+                <button type="submit">Save</button>
+            </form>
+        </td>
+        <td>-</td>
+    </tr>
+    </tbody>
+</table>
+<script>
+    $('document').ready(
+        function () {
+            $('#selectUser').empty();
+            $.get('/api/users').done(function (users) {
+                    users.forEach( function (user) {
+                        if (user.userName === '${order.user}') {
+                            $('#selectUser').append(`<option selected>${user.userName}</option>`);
+                        } else {
+                            $('#selectUser').append(`<option>${user.userName}</option>`);
+                        }
+                        }
+                    )
+                }
+            );
+            $('#selectClient').empty();
+            $.get('/api/clients').done(function (clients) {
+                    clients.forEach( function (client) {
+                        if (client.clientName === '${order.client}') {
+                            $('#selectClient').append(`<option selected>${client.clientName}</option>`);
+                        } else {
+                            $('#selectClient').append(`<option>${client.clientName}</option>`);
+                        }
+                        }
+                    )
+                }
+            );
+        }
+    )
+</script>
+</body>
+</html>

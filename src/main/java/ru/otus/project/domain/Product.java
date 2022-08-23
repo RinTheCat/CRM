@@ -8,8 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "clients")
-public class Client {
+@Table(name = "products")
+public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -32,9 +33,10 @@ public class Client {
     public void setName(String name) {
         this.name = name;
     }
-    //    @Override
+
+//    @Override
 //    public String toString() {
-//        return "Client{" +
+//        return "Product{" +
 //                "id=" + id +
 //                ", name='" + name + '\'' +
 //                '}';

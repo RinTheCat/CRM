@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.project.domain.Order;
+import ru.otus.project.domain.Status;
 import ru.otus.project.repository.OrderRepository;
 
 import javax.persistence.EntityNotFoundException;
@@ -28,8 +29,10 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Optional<Order> getById(long id) {
-        return orderRepository.findById(id);
+    public Order getById(long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        if (order.isEmpty()) throw new EntityNotFoundException(String.format("Not found with id=%s", id));
+        return order.get();
     }
 
     @Transactional
@@ -55,5 +58,9 @@ public class OrderService {
 
     public List<Order> getAll() {
         return orderRepository.findAll();
+    }
+
+    public List<Order> getAllByStatus(Status status) {
+        return orderRepository.findAllByStatus(status);
     }
 }

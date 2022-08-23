@@ -22,7 +22,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,8 +33,23 @@ public class Order {
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    private List<ProductQuantity> productQuantities;
+
     @OneToMany(orphanRemoval = true, mappedBy = "order", fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+    public Order() {
+    }
+
+    public Order(long id, Status status, User clientManager, Client client, List<ProductQuantity> productQuantities, List<Comment> comments) {
+        this.id = id;
+        this.status = status;
+        this.clientManager = clientManager;
+        this.client = client;
+        this.productQuantities = productQuantities;
+        this.comments = comments;
+    }
 
     public void setPreviousStatus() {
         this.setStatus(status.prev());
@@ -64,11 +79,45 @@ public class Order {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", status=" + status +
-                '}';
+    public User getClientManager() {
+        return clientManager;
     }
+
+    public void setClientManager(User clientManager) {
+        this.clientManager = clientManager;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public List<ProductQuantity> getProductQuantities() {
+        return productQuantities;
+    }
+
+    public void setProductQuantities(List<ProductQuantity> productQuantities) {
+        this.productQuantities = productQuantities;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+//    @Override
+//    public String toString() {
+//        return "Order{" +
+//                "id=" + id +
+//                ", status=" + status +
+//                ", clientManager=" + clientManager +
+//                ", client=" + client +
+//                ", productQuantities=" + productQuantities +
+//                '}';
+//    }
 }
