@@ -2,9 +2,9 @@ package ru.otus.project.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.otus.project.domain.Product;
-import ru.otus.project.domain.Order;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository  extends JpaRepository<Product, Long> {
+    Optional<Product> findByName(String name);
 }

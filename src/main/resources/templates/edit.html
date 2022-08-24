@@ -55,12 +55,16 @@
 
     <div class="row">
         <label>КМ:</label>
-        <select id="selectUser"></select>
+        <select id="selectUser">
+            <option id="selectedUser" th:text="*{user}" selected></option>
+        </select>
     </div>
 
     <div class="row">
         <label>Client:</label>
-        <select id="selectClient"></select>
+        <select id="selectClient">
+            <option id="selectedClient" th:text="*{client}" selected></option>
+        </select>
     </div>
 </form>
 <h3>Выбранные товары:</h3>
@@ -75,10 +79,16 @@
     </thead>
     <tbody>
     <tr th:each="item : *{quantities}">
-        <td th:text="${item.productId}"></td>
+        <td th:text="${item.productId}" class="itemId"></td>
         <td th:text="${item.name}"></td>
-        <td th:text="${item.quantity}"></td>
-        <td></td>
+        <td>
+            <select class="quantitySelect">
+                <option class="selectedQuantity" th:text="${item.quantity}" selected></option>
+            </select>
+        </td>
+        <td>
+            <button class="deleteItem">Delete</button>
+        </td>
     </tr>
     <tr>
         <td>new</td>
@@ -86,10 +96,10 @@
             <select id="selectProducts"></select>
         </td>
         <td>
-            <select id="quantitySelect"></select>
+            <select id="selectQuantity"></select>
         </td>
         <td>
-            <button>Add</button>
+            <button id="addNewProduct">Add</button>
         </td>
     </tr>
     </tbody>
@@ -105,25 +115,20 @@
     </thead>
     <tbody>
     <tr th:each="comment : *{comments}">
-        <td th:text="${comment.id}">1</td>
+        <td th:text="${comment.id}" class="commentId"></td>
         <td>
-            <form>
-                <input name="text" type="text" value="Понравилось" th:value="${comment.text}"/>
-                <button id="editComment">Save</button>
-            </form>
+            <input th:value="${comment.text}" class="commentText"/>
+            <button class="editComment">Save</button>
         </td>
         <td>
-            <button id="deleteComment">Delete</button>
+            <button class="deleteComment">Delete</button>
         </td>
     </tr>
     <tr>
         <td>new</td>
         <td>
-            <form>
-                <input name="text" type="text"/>
-                <input name="bookId" type="hidden" th:value="*{id}"/>
-                <button type="newComment">Add</button>
-            </form>
+            <input type="text" class="newCommentText"/>
+            <button class="addNewComment">Add</button>
         </td>
         <td>-</td>
     </tr>
@@ -132,11 +137,10 @@
 <script>
     $('document').ready(
         function () {
-            $('#selectUser').empty();
             $.get('/api/users').done(function (users) {
                     users.forEach( function (user) {
-                        if (user.userName === '${order.user}') {
-                            $('#selectUser').append(`<option selected>${user.userName}</option>`);
+                        if (user.userName === $('#selectedUser').text()) {
+
                         } else {
                             $('#selectUser').append(`<option>${user.userName}</option>`);
                         }
@@ -148,12 +152,11 @@
                         alert(error.status + " ошибка: " + error.responseText);
                     }
                 );
-            $('#selectClient').empty();
             $.get('/api/clients')
                 .done(function (clients) {
                     clients.forEach( function (client) {
-                        if (client.clientName === '${order.client}') {
-                            $('#selectClient').append(`<option selected>${client.clientName}</option>`);
+                        if (client.clientName === $('#selectedClient').text()) {
+
                         } else {
                             $('#selectClient').append(`<option>${client.clientName}</option>`);
                         }
@@ -165,15 +168,28 @@
                     alert(error.status + " ошибка: " + error.responseText);
                     }
                 );
+            $('#selectProducts').empty();
+            $.get('/api/products')
+                .done(function (products) {
+                    products.forEach( function (product) {
+                        $('#selectProducts').append(`<option>${product.name}</option>`);
+                    })
+                })
+                .fail( function (error) {
+                        alert(error.status + " ошибка: " + error.responseText);
+                    }
+                );
+            $('#selectQuantity').empty();
+            for (let i = 1; i <= 10; i++) {
+                $('#selectQuantity').append(`<option>${i}</option>`);
+            }
         }
     );
     $('#selectClient').on('change', function () {
         console.log($(this).val());
-        console.log($(this).closest('tr').find('input#id-input').text());
     });
     $('#selectUser').on('change', function () {
         console.log($(this).val());
-        console.log($(this).closest('tr').find('input#id-input').text());
     });
 </script>
 <script>
@@ -184,17 +200,169 @@
 </script>
 <script>
     $('#pullStatus').click(function () {
-        console.log($(this).closest('tr').find('input#id-input').text());
+        let id = $('#id-input').val();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + id + '/status/pull',
+            success: function () {
+                window.location.reload();
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+        return false;
     })
 </script>
 <script>
     $('#pushStatus').click(function () {
-        console.log($(this).closest('tr').find('input#id-input').text());
+        let id = $('#id-input').val();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + id + '/status/push',
+            success: function () {
+                window.location.reload();
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+        return false;
     })
 </script>
 <script>
     $('#cancel').click(function () {
-        console.log($(this).closest('tr').find('input#id-input').text());
+        let id = $('#id-input').val();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + id + '/status/cancel',
+            success: function () {
+                window.location.reload();
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+        return false;
+    })
+</script>
+<script>
+    $('#addNewProduct').click(function () {
+        let id = $('#id-input').val();
+        let product = $('#selectProducts').val();
+        let quantity = $('#selectQuantity').val();
+        $.ajax({
+            method: 'POST',
+            url: '/api/order/' + id + '/product/' + product,
+            data: {
+                quantity: quantity
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('.quantitySelect').click(function () {
+        let selected = $(this).find('.selectedQuantity').text();
+        for (let i = 1; i <= 10; i++) {
+            if (i.toString() === selected) {
+
+            } else {
+                $(this).append(`<option>${i}</option>`);
+            }
+        }
+    })
+</script>
+<script>
+    $('.quantitySelect').on('change', function () {
+        let orderId = $('#id-input').val();
+        let itemId = $(this).closest('tr').find('.itemId').text();
+        console.log();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + orderId + '/product/' + itemId,
+            data: {
+                quantity: $(this).val()
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('.deleteItem').click(function () {
+        let orderId = $('#id-input').val();
+        let itemId = $(this).closest('tr').find('.itemId').text()
+        $.ajax({
+            method: 'DELETE',
+            url: '/api/order/'+ orderId + '/product/' + itemId,
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('.addNewComment').click(function () {
+        let id = $('#id-input').val();
+        $.ajax({
+            method: 'POST',
+            url: '/api/order/' + id + '/comment',
+            data: {
+                text: $(this).closest('td').find('.newCommentText').val()
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('.deleteComment').click(function () {
+        let id = $(this).closest('tr').find('.commentId').text();
+        $.ajax({
+            method: 'DELETE',
+            url: '/api/comment/' + id,
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('.editComment').click(function () {
+        let id = $(this).closest('tr').find('.commentId').text();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/comment/' + id,
+            data: {
+                newText: $(this).closest('tr').find('.commentText').val()
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
     })
 </script>
 </body>

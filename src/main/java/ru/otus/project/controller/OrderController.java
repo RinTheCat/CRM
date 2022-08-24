@@ -47,16 +47,40 @@ public class OrderController {
         orderService.deleteById(id);
     }
 
-    @PutMapping("/api/order/{id}/product/{productId}")
-    public void addProduct(@PathVariable long id, @PathVariable long productId, @RequestParam int quantity) {
-        orderService.addNewProduct(id, productId, quantity);
+    @PostMapping("/api/order/{id}/product/{productName}")
+    public void addProduct(@PathVariable long id, @PathVariable String productName, @RequestParam int quantity) {
+        orderService.addNewProduct(id, productName, quantity);
     }
 
-    @PutMapping("/api/order/{id}/product/{productId}/quantity/{quantity}")
-    public void changeProductQuantity(@PathVariable long id, @PathVariable long productId, @PathVariable int quantity) {
+    @PutMapping("/api/order/{id}/product/{productId}")
+    public void changeProductQuantity(@PathVariable long id, @PathVariable long productId, @RequestParam int quantity) {
         orderService.addProductQuantity(id, productId, quantity);
     }
 
+    @DeleteMapping("/api/order/{id}/product/{productId}")
+    public void deleteProduct(@PathVariable long id, @PathVariable long productId) {
+        orderService.deleteProduct(id, productId);
+    }
+
+    @PutMapping("/api/order/{id}/status/push")
+    public void pushStatus(@PathVariable long id) {
+        orderService.pushStatus(id);
+    }
+
+    @PutMapping("/api/order/{id}/status/pull")
+    public void pullStatus(@PathVariable long id) {
+        orderService.pullStatus(id);
+    }
+
+    @PutMapping("/api/order/{id}/status/cancel")
+    public void cancelStatus(@PathVariable long id) {
+        orderService.cancelStatus(id);
+    }
+
+    @PostMapping("/api/order/{id}/comment")
+    public void addComment(@PathVariable long id, @RequestParam String text) {
+        orderService.addNewComment(id, text);
+    }
 //    @PostMapping("/api/order")
 //    public void createOrder(@RequestBody OrderDto newOrder) {
 //        orderService.insert(newOrder.toDomainObject());

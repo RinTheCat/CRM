@@ -26,6 +26,15 @@ public class Comment {
         return id;
     }
 
+    public Comment() {
+    }
+
+    public Comment(long id, Order order, String text) {
+        this.id = id;
+        this.order = order;
+        this.text = text;
+    }
+
     public void setId(long id) {
         this.id = id;
     }

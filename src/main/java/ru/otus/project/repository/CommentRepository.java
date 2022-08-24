@@ -7,5 +7,4 @@ import ru.otus.project.domain.Order;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findAllByOrder(Order order);
 }

@@ -7,7 +7,7 @@ public enum Status {
         }
 
         public Status prev() {
-            return null;
+            return CREATED;
         }
     },
     ASSEMBLY {
@@ -39,7 +39,7 @@ public enum Status {
     },
     CLOSED {
         public Status next() {
-            return null;
+            return CLOSED;
         }
 
         public Status prev() {
@@ -48,11 +48,11 @@ public enum Status {
     },
     CANCELLED {
         public Status next() {
-            return null;
+            return CANCELLED;
         }
 
         public Status prev() {
-            return null;
+            return CANCELLED;
         }
     };
 
