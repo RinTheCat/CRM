@@ -39,6 +39,7 @@
 </head>
 <body>
 <form id="edit-form" th:object="${order}">
+    <button id="exit">Назад</button>
     <div class="row">
         <label for="id-input">Номер заказа:</label>
         <input id="id-input" type="text" readonly="readonly" value="1" th:value="*{id}"/>
@@ -55,20 +56,45 @@
     <div class="row">
         <label>КМ:</label>
         <select id="selectUser"></select>
-<!--        <input id="user-input" name="user" type="text" value="Колобок" th:value="*{user}"/>-->
     </div>
 
     <div class="row">
         <label>Client:</label>
         <select id="selectClient"></select>
-<!--        <input id="client-input" name="client" type="text" value="Колобок" th:value="*{client}"/>-->
-    </div>
-
-    <div class="row">
-        <button type="submit">Save</button>
     </div>
 </form>
-<h3>Comments Info:</h3>
+<h3>Выбранные товары:</h3>
+<table th:object="${order}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Количество</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : *{quantities}">
+        <td th:text="${item.productId}"></td>
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.quantity}"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>new</td>
+        <td>
+            <select id="selectProducts"></select>
+        </td>
+        <td>
+            <select id="quantitySelect"></select>
+        </td>
+        <td>
+            <button>Add</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<h3>Комментарии КМ:</h3>
 <table th:object="${order}">
     <thead>
     <tr>
@@ -81,22 +107,22 @@
     <tr th:each="comment : *{comments}">
         <td th:text="${comment.id}">1</td>
         <td>
-            <form action="editBook.html" th:method="post" th:action="@{/comment/edit/{id}(id = ${comment.id})}" >
+            <form>
                 <input name="text" type="text" value="Понравилось" th:value="${comment.text}"/>
-                <button type="submit">Save</button>
+                <button id="editComment">Save</button>
             </form>
         </td>
         <td>
-            <a href="editBook.html" th:href="@{/comments/delete/{id}(id = ${comment.id})}"><button type="button">Delete</button></a>
+            <button id="deleteComment">Delete</button>
         </td>
     </tr>
     <tr>
         <td>new</td>
         <td>
-            <form action="editBook.html" th:method="post" th:action="@{/comments/create}" >
+            <form>
                 <input name="text" type="text"/>
                 <input name="bookId" type="hidden" th:value="*{id}"/>
-                <button type="submit">Save</button>
+                <button type="newComment">Add</button>
             </form>
         </td>
         <td>-</td>
@@ -117,9 +143,14 @@
                         }
                     )
                 }
-            );
+            )
+                .fail( function (error) {
+                        alert(error.status + " ошибка: " + error.responseText);
+                    }
+                );
             $('#selectClient').empty();
-            $.get('/api/clients').done(function (clients) {
+            $.get('/api/clients')
+                .done(function (clients) {
                     clients.forEach( function (client) {
                         if (client.clientName === '${order.client}') {
                             $('#selectClient').append(`<option selected>${client.clientName}</option>`);
@@ -129,9 +160,42 @@
                         }
                     )
                 }
-            );
+            )
+                .fail( function (error) {
+                    alert(error.status + " ошибка: " + error.responseText);
+                    }
+                );
         }
-    )
+    );
+    $('#selectClient').on('change', function () {
+        console.log($(this).val());
+        console.log($(this).closest('tr').find('input#id-input').text());
+    });
+    $('#selectUser').on('change', function () {
+        console.log($(this).val());
+        console.log($(this).closest('tr').find('input#id-input').text());
+    });
+</script>
+<script>
+    $('#exit').click(function () {
+        window.location.href = '/';
+        return false;
+    })
+</script>
+<script>
+    $('#pullStatus').click(function () {
+        console.log($(this).closest('tr').find('input#id-input').text());
+    })
+</script>
+<script>
+    $('#pushStatus').click(function () {
+        console.log($(this).closest('tr').find('input#id-input').text());
+    })
+</script>
+<script>
+    $('#cancel').click(function () {
+        console.log($(this).closest('tr').find('input#id-input').text());
+    })
 </script>
 </body>
 </html>

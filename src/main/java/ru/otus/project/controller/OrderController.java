@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,11 +42,21 @@ public class OrderController {
         return OrderDto.toDto(orderService.getById(id));
     }
 
-//    @DeleteMapping("/api/order/{id}")
-//    public void deleteOrder(@PathVariable long id) {
-//        orderService.deleteById(id);
-//    }
-//
+    @DeleteMapping("/api/order/{id}")
+    public void deleteOrder(@PathVariable long id) {
+        orderService.deleteById(id);
+    }
+
+    @PutMapping("/api/order/{id}/product/{productId}")
+    public void addProduct(@PathVariable long id, @PathVariable long productId, @RequestParam int quantity) {
+        orderService.addNewProduct(id, productId, quantity);
+    }
+
+    @PutMapping("/api/order/{id}/product/{productId}/quantity/{quantity}")
+    public void changeProductQuantity(@PathVariable long id, @PathVariable long productId, @PathVariable int quantity) {
+        orderService.addProductQuantity(id, productId, quantity);
+    }
+
 //    @PostMapping("/api/order")
 //    public void createOrder(@RequestBody OrderDto newOrder) {
 //        orderService.insert(newOrder.toDomainObject());

@@ -24,3 +24,8 @@ insert into product_quantity(order_id, product_id, quantity) values (1,1,1);
 insert into product_quantity(order_id, product_id, quantity) values (1, 3, 4);
 insert into product_quantity(order_id, product_id, quantity) values (2, 6, 1);
 insert into product_quantity(order_id, product_id, quantity) values (2, 5, 100);
+
+insert into comments(order_id, text) values(1, 'Документы переданы бухгалтерии');
+insert into comments(order_id, text) values(1, 'Пожелание от заказчика: праздничная коробка');
+insert into comments(order_id, text) values(2, 'Изменен адрес доставки');
+insert into comments(order_id, text) values(2, 'Посылка собрана');

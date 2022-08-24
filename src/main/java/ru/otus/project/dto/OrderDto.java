@@ -19,14 +19,14 @@ public class OrderDto {
     
     private String client;
 
-    private List<String> comments;
+    private List<CommentDto> comments;
 
-    private Map<String, Integer> quantities;
+    private List<ProductQuantityDto> quantities;
 
     public OrderDto() {
     }
 
-    public OrderDto(long id, Status status, String user, String client, Map<String, Integer> quantities, List<String> comments) {
+    public OrderDto(long id, Status status, String user, String client, List<ProductQuantityDto> quantities, List<CommentDto> comments) {
         this.id = id;
         this.status = status;
         this.user = user;
@@ -67,19 +67,19 @@ public class OrderDto {
         this.client = client;
     }
 
-    public List<String> getComments() {
+    public List<CommentDto> getComments() {
         return comments;
     }
 
-    public void setComments(List<String> comments) {
+    public void setComments(List<CommentDto> comments) {
         this.comments = comments;
     }
 
-    public Map<String, Integer> getQuantities() {
+    public List<ProductQuantityDto> getQuantities() {
         return quantities;
     }
 
-    public void setQuantities(Map<String, Integer> quantities) {
+    public void setQuantities(List<ProductQuantityDto> quantities) {
         this.quantities = quantities;
     }
 
@@ -92,8 +92,7 @@ public class OrderDto {
                 order.getStatus(),
                 order.getClientManager().getUsername(),
                 order.getClient().getName(),
-                order.getProductQuantities().stream().collect(Collectors.toMap(
-                        i -> i.getProduct().getName(), ProductQuantity::getQuantity)),
-                order.getComments().stream().map(Comment::getText).collect(Collectors.toList()));
+                order.getProductQuantities().stream().map(ProductQuantityDto::toDto).collect(Collectors.toList()),
+                order.getComments().stream().map(CommentDto::toDto).collect(Collectors.toList()));
     }
 }

@@ -24,6 +24,16 @@ public class ProductQuantity {
 
     int quantity;
 
+    public ProductQuantity(OrderProductKey id, Order order, Product product, int quantity) {
+        this.id = id;
+        this.order = order;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    public ProductQuantity() {
+    }
+
     public OrderProductKey getId() {
         return id;
     }
@@ -55,14 +65,4 @@ public class ProductQuantity {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-
-    //    @Override
-//    public String toString() {
-//        return "ProductQuantity{" +
-//                "id=" + id +
-//                ", order=" + order.getId() +
-//                ", product=" + product.getName() +
-//                ", quantity=" + quantity +
-//                '}';
-//    }
 }
