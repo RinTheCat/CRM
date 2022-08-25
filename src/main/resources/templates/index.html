@@ -34,7 +34,7 @@
     <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-
+<p id="greetings" style="text-align: right"></p>
 <table class="header-block">
     <thead>
     <tr>
@@ -47,6 +47,10 @@
             <select id="selectStatus"></select>
             <button id="getOrdersByStatus">Получить</button>
         </td>
+        <td>
+            <p>Создать новую: </p>
+            <button id="createNew">Создать</button>
+        </td>
     </tr>
     </thead>
 </table>
@@ -58,6 +62,14 @@
 <script>
     $('document').ready(
         function () {
+            $.get('/api/username').done(function (response) {
+                $('#greetings').text(response);
+                }
+            )
+                .fail( function (error) {
+                        alert(error.status + " ошибка: " + error.responseText);
+                    }
+                );
             $('#selectStatus').empty();
             $.get('api/statuses').done(function (statuses) {
                 statuses.forEach( function (status) {
@@ -153,6 +165,21 @@
         window.location.href = '/edit/' + id;
         return false;
     });
+</script>
+<script>
+    $('#createNew').click(function () {
+        $.ajax({
+            method: 'POST',
+            url: '/api/order',
+            success: function (response) {
+                window.location.href = '/edit/' + response;
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+        return false;
+    })
 </script>
 </body>
 </html>

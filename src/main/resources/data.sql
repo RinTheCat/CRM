@@ -11,11 +11,21 @@ insert into clients(name) values ('ОАО Рога и копыта');
 insert into clients(name) values ('ФЛ Щербаков Юрий');
 
 insert into users(username, password, account_non_expired, account_non_locked, credentials_non_expired, enabled)
-    values ('petrov.ae', 'qwerty', false , false, false, true);
+    values ('petrov.ae', 'qwerty', true , true, true, true);
 insert into users(username, password, account_non_expired, account_non_locked, credentials_non_expired, enabled)
-    values ('kolibelkin.sp', 'qwerty', false , false, false, true);
+    values ('kolibelkin.sp', 'qwerty', true , true, true, true);
 insert into users(username, password, account_non_expired, account_non_locked, credentials_non_expired, enabled)
-    values ('orlov.nk', 'qwerty', false , false, false, true);
+    values ('orlov.nk', 'qwerty', true , true, true, true);
+insert into users(username, password, account_non_expired, account_non_locked, credentials_non_expired, enabled)
+    values ('ivanova.ys', 'qwerty1', true , true, true, true);
+
+insert into authorities(authority) values ('ROLE_CLIENT_MANAGER');
+insert into authorities(authority) values ('ROLE_HEAD_MANAGER');
+
+insert into user_authorities (user_id, authority_id) values (1, 1);
+insert into user_authorities (user_id, authority_id) values (2, 1);
+insert into user_authorities (user_id, authority_id) values (3, 1);
+insert into user_authorities (user_id, authority_id) values (4, 2);
 
 insert into orders(status, user_id, client_id) values ('CREATED', 1, 2);
 insert into orders(status, user_id, client_id) values ('CREATED', 3, 4);

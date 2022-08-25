@@ -21,7 +21,7 @@ public class ProjectApplication {
 //		orderService.pullStatus(1L);
 //		System.out.println("withPulledStatus: " + orderService.getById(1L).toString());
 
-//		Console.main(args);
+		Console.main(args);
 	}
 
 }

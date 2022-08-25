@@ -39,6 +39,7 @@
 </head>
 <body>
 <form id="edit-form" th:object="${order}">
+    <p id="greetings" style="text-align: right"></p>
     <button id="exit">Назад</button>
     <div class="row">
         <label for="id-input">Номер заказа:</label>
@@ -137,6 +138,14 @@
 <script>
     $('document').ready(
         function () {
+            $.get('/api/username').done(function (response) {
+                    $('#greetings').text(response);
+                }
+            )
+                .fail( function (error) {
+                        alert(error.status + " ошибка: " + error.responseText);
+                    }
+                );
             $.get('/api/users').done(function (users) {
                     users.forEach( function (user) {
                         if (user.userName === $('#selectedUser').text()) {
@@ -355,6 +364,42 @@
             url: '/api/comment/' + id,
             data: {
                 newText: $(this).closest('tr').find('.commentText').val()
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('#selectUser').on('change', function () {
+        let orderId = $('#id-input').val();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + orderId + '/user/',
+            data: {
+                userName: $(this).val()
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('#selectClient').on('change', function () {
+        let orderId = $('#id-input').val();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + orderId + '/client/',
+            data: {
+                clientName: $(this).val()
             },
             success: function () {
                 window.location.reload()

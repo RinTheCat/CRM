@@ -5,6 +5,7 @@ import ru.otus.project.domain.Client;
 import ru.otus.project.repository.ClientRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClientService {
@@ -16,5 +17,9 @@ public class ClientService {
 
     public List<Client> getAll() {
         return clientRepository.findAll();
+    }
+
+    public Optional<Client> getByName(String name) {
+        return clientRepository.findClientByName(name);
     }
 }

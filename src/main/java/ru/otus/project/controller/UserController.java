@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.otus.project.dto.UserDto;
 import ru.otus.project.service.UserService;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,5 +21,10 @@ public class UserController {
     @GetMapping("/api/users")
     public List<UserDto> getUsers() {
         return userService.getAll().stream().map(UserDto::toDto).collect(Collectors.toList());
+    }
+
+    @GetMapping(value = "/api/username")
+    public String currentUserName(Principal principal) {
+        return principal.getName();
     }
 }
