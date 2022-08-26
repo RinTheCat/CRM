@@ -108,11 +108,4 @@ public class User implements UserDetails {
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
     }
-
-//    @Override
-//    public String toString() {
-//        return "User{" +
-//                "username='" + username + '\'' +
-//                '}';
-//    }
 }

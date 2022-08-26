@@ -110,14 +110,4 @@ public class Order {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
-//    @Override
-//    public String toString() {
-//        return "Order{" +
-//                "id=" + id +
-//                ", status=" + status +
-//                ", clientManager=" + clientManager +
-//                ", client=" + client +
-//                ", productQuantities=" + productQuantities +
-//                '}';
-//    }
 }

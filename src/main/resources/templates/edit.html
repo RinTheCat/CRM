@@ -28,6 +28,7 @@
 
         table {
             border-collapse: collapse;
+            width: 80%;
         }
 
         td {
@@ -88,7 +89,7 @@
             </select>
         </td>
         <td>
-            <button class="deleteItem">Delete</button>
+            <button class="deleteItem">Удалить</button>
         </td>
     </tr>
     <tr>
@@ -100,7 +101,7 @@
             <select id="selectQuantity"></select>
         </td>
         <td>
-            <button id="addNewProduct">Add</button>
+            <button id="addNewProduct">Добавить</button>
         </td>
     </tr>
     </tbody>
@@ -110,26 +111,26 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th>Edit text</th>
-        <th>Delete</th>
+        <th>Редактировать</th>
+        <th>Удалить</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="comment : *{comments}">
         <td th:text="${comment.id}" class="commentId"></td>
         <td>
-            <input th:value="${comment.text}" class="commentText"/>
-            <button class="editComment">Save</button>
+            <input th:value="${comment.text}" class="commentText" style="width: 70%"/>
+            <button class="editComment">Сохранить</button>
         </td>
         <td>
-            <button class="deleteComment">Delete</button>
+            <button class="deleteComment">Удалить</button>
         </td>
     </tr>
     <tr>
         <td>new</td>
         <td>
             <input type="text" class="newCommentText"/>
-            <button class="addNewComment">Add</button>
+            <button class="addNewComment">Добавить</button>
         </td>
         <td>-</td>
     </tr>
