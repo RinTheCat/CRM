@@ -21,6 +21,12 @@ public class CommentService {
         commentRepository.deleteById(id);
     }
 
+    public Comment getById(long id) {
+        Optional<Comment> comment = commentRepository.findById(id);
+        if (comment.isEmpty()) throw new EntityNotFoundException(String.format("Not found with id=%s", id));
+        return comment.get();
+    }
+
     @Transactional
     public void editText(long id, String newText) {
         Optional<Comment> comment = commentRepository.findById(id);

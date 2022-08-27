@@ -12,7 +12,7 @@ public class ProjectApplication {
 	public static void main(String[] args) throws SQLException {
 		SpringApplication.run(ProjectApplication.class, args);
 
-//		Console.main(args);
+		Console.main(args);
 	}
 
 }

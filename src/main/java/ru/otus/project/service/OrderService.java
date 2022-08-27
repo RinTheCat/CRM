@@ -47,10 +47,6 @@ public class OrderService {
         return orderRepository.count();
     }
 
-    public Order insert(Order order) {
-        return orderRepository.save(order);
-    }
-
     public Order getById(long id) {
         Optional<Order> order = orderRepository.findById(id);
         if (order.isEmpty()) throw new EntityNotFoundException(String.format("Not found with id=%s", id));
@@ -63,7 +59,7 @@ public class OrderService {
     }
 
     @Transactional
-    public long createNewProduct(String userName) {
+    public long createNewOrder(String userName) {
         Optional<User> user = userRepository.findUserByUsername(userName);
         if (user.isEmpty()) throw new EntityNotFoundException(String.format("Not found with name=%s", userName));
         Order newOrder = new Order(0L, Status.CREATED, user.get(),

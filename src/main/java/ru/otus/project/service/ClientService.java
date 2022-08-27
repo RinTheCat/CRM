@@ -18,8 +18,4 @@ public class ClientService {
     public List<Client> getAll() {
         return clientRepository.findAll();
     }
-
-    public Optional<Client> getByName(String name) {
-        return clientRepository.findClientByName(name);
-    }
 }

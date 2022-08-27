@@ -23,7 +23,7 @@ insert into user_authorities (user_id, authority_id) values (2, 2);
 insert into orders(status, user_id, client_id) values ('CREATED', 1, 1);
 insert into orders(status, user_id, client_id) values ('ASSEMBLY', 1, 1);
 
-insert into product_quantity(order_id, product_id, quantity) values (1, 1, 1);
+insert into product_quantity(order_id, product_id, quantity) values (1, 1, 9);
 insert into product_quantity(order_id, product_id, quantity) values (1, 2, 4);
 insert into product_quantity(order_id, product_id, quantity) values (2, 1, 4);
 insert into product_quantity(order_id, product_id, quantity) values (2, 2, 4);
