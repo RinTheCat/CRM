@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Orders</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+            font-family: sans-serif;
+        }
+
+        h4 {
+            padding: 50px;
+        }
+
+        td {
+            padding: 10px;
+        }
+
+        table {
+            border: 1px solid darkred;
+            width: auto;
+            border-collapse: collapse;
+        }
+
+        table tr td {
+            border: 1px solid darkred;
+        }
+
+        .header-block {
+            width: 500px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<p id="greetings" style="text-align: right"></p>
+<table class="header-block">
+    <thead>
+    <tr>
+        <td>
+            <p>Все заявки: </p>
+            <button id="getOrders">Получить</button>
+        </td>
+        <td>
+            <p>По статусу: </p>
+            <select id="selectStatus"></select>
+            <button id="getOrdersByStatus">Получить</button>
+        </td>
+        <td>
+            <p>Создать новую: </p>
+            <button id="createNew">Создать</button>
+        </td>
+    </tr>
+    </thead>
+</table>
+
+<div>
+    <table id="order_table"></table>
+</div>
+
+<script>
+    $('document').ready(
+        function () {
+            $.get('/api/username').done(function (response) {
+                $('#greetings').text(response);
+                }
+            )
+                .fail( function (error) {
+                        alert(error.status + " ошибка: " + error.responseText);
+                    }
+                );
+            $('#selectStatus').empty();
+            $.get('api/statuses').done(function (statuses) {
+                statuses.forEach( function (status) {
+                    $('#selectStatus').append(`
+                    <option>${status}</option>`)
+                    }
+                )
+            }
+            )
+                .fail( function (error) {
+                    alert(error.status + " ошибка: " + error.responseText);
+                    }
+                )
+        }
+    )
+</script>
+
+<script>
+    $('#getOrders').click(function () {
+        $('#order_table').empty().append(`
+            <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Статус</th>
+                <th>Исполнитель</th>
+                <th>Заказчик</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="orders"></tbody>
+        `);
+        $.get('/api/orders').done(function (orders) {
+            orders.forEach(function (order) {
+                $('#orders').append(`
+                    <tr>
+                        <td class="orderId">${order.id}</td>
+                        <td>${order.status}</td>
+                        <td>${order.user}</td>
+                        <td>${order.client}</td>
+                        <td><button class="editOrderButton">Редактировать</button></td>
+                    </tr>
+                `)
+            });
+        })
+            .fail( function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+                }
+            );
+    });
+</script>
+<script>
+    $('#getOrdersByStatus').click(function () {
+        $('#order_table').empty().append(`
+            <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Статус</th>
+                <th>Исполнитель</th>
+                <th>Заказчик</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="orders"></tbody>
+        `);
+        $.ajax({
+            method: 'GET',
+            url: '/api/orders',
+            data: {
+                status: $('#selectStatus').val()
+            },
+            success: function (orders) {
+                orders.forEach(function (order) {
+                    $('#orders').append(`
+                    <tr>
+                        <td class="orderId">${order.id}</td>
+                        <td>${order.status}</td>
+                        <td>${order.user}</td>
+                        <td>${order.client}</td>
+                        <td><button class="editOrderButton">Редактировать</button></td>
+                    </tr>
+                `)
+                });
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        })
+    });
+</script>
+<script>
+    $(document).on('click', '.editOrderButton', function () {
+        var id = $(this).closest('tr').find('td.orderId').text();
+        window.location.href = '/edit/' + id;
+        return false;
+    });
+</script>
+<script>
+    $('#createNew').click(function () {
+        $.ajax({
+            method: 'POST',
+            url: '/api/order',
+            success: function (response) {
+                window.location.href = '/edit/' + response;
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+        return false;
+    })
+</script>
+</body>
+</html>

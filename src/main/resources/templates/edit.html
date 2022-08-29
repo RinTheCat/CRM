@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+            font-family: sans-serif;
+        }
+
+        h3 {
+            color: darkred;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+        }
+
+        td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<form id="edit-form" th:object="${order}">
+    <p id="greetings" style="text-align: right"></p>
+    <button id="exit">Назад</button>
+    <div class="row">
+        <label for="id-input">Номер заказа:</label>
+        <input id="id-input" type="text" readonly="readonly" value="1" th:value="*{id}"/>
+    </div>
+
+    <div class="row">
+        <label>Статус:</label>
+        <button id="pullStatus">Назад</button>
+        <span th:text="*{status}"></span>
+        <button id="pushStatus">Вперед</button>
+        <button id="cancel">Отменить</button>
+    </div>
+
+    <div class="row">
+        <label>КМ:</label>
+        <select id="selectUser">
+            <option id="selectedUser" th:text="*{user}" selected></option>
+        </select>
+    </div>
+
+    <div class="row">
+        <label>Client:</label>
+        <select id="selectClient">
+            <option id="selectedClient" th:text="*{client}" selected></option>
+        </select>
+    </div>
+</form>
+<h3>Выбранные товары:</h3>
+<table th:object="${order}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Количество</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : *{quantities}">
+        <td th:text="${item.productId}" class="itemId"></td>
+        <td th:text="${item.name}"></td>
+        <td>
+            <select class="quantitySelect">
+                <option class="selectedQuantity" th:text="${item.quantity}" selected></option>
+            </select>
+        </td>
+        <td>
+            <button class="deleteItem">Удалить</button>
+        </td>
+    </tr>
+    <tr>
+        <td>new</td>
+        <td>
+            <select id="selectProducts"></select>
+        </td>
+        <td>
+            <select id="selectQuantity"></select>
+        </td>
+        <td>
+            <button id="addNewProduct">Добавить</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<h3>Комментарии КМ:</h3>
+<table th:object="${order}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Редактировать</th>
+        <th>Удалить</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="comment : *{comments}">
+        <td th:text="${comment.id}" class="commentId"></td>
+        <td>
+            <input th:value="${comment.text}" class="commentText" style="width: 70%"/>
+            <button class="editComment">Сохранить</button>
+        </td>
+        <td>
+            <button class="deleteComment">Удалить</button>
+        </td>
+    </tr>
+    <tr>
+        <td>new</td>
+        <td>
+            <input type="text" class="newCommentText"/>
+            <button class="addNewComment">Добавить</button>
+        </td>
+        <td>-</td>
+    </tr>
+    </tbody>
+</table>
+<script>
+    $('document').ready(
+        function () {
+            $.get('/api/username').done(function (response) {
+                    $('#greetings').text(response);
+                }
+            )
+                .fail( function (error) {
+                        alert(error.status + " ошибка: " + error.responseText);
+                    }
+                );
+            $.get('/api/users').done(function (users) {
+                    users.forEach( function (user) {
+                        if (user.userName === $('#selectedUser').text()) {
+
+                        } else {
+                            $('#selectUser').append(`<option>${user.userName}</option>`);
+                        }
+                        }
+                    )
+                }
+            )
+                .fail( function (error) {
+                        alert(error.status + " ошибка: " + error.responseText);
+                    }
+                );
+            $.get('/api/clients')
+                .done(function (clients) {
+                    clients.forEach( function (client) {
+                        if (client.clientName === $('#selectedClient').text()) {
+
+                        } else {
+                            $('#selectClient').append(`<option>${client.clientName}</option>`);
+                        }
+                        }
+                    )
+                }
+            )
+                .fail( function (error) {
+                    alert(error.status + " ошибка: " + error.responseText);
+                    }
+                );
+            $('#selectProducts').empty();
+            $.get('/api/products')
+                .done(function (products) {
+                    products.forEach( function (product) {
+                        $('#selectProducts').append(`<option>${product.name}</option>`);
+                    })
+                })
+                .fail( function (error) {
+                        alert(error.status + " ошибка: " + error.responseText);
+                    }
+                );
+            $('#selectQuantity').empty();
+            for (let i = 1; i <= 10; i++) {
+                $('#selectQuantity').append(`<option>${i}</option>`);
+            }
+        }
+    );
+    $('#selectClient').on('change', function () {
+        console.log($(this).val());
+    });
+    $('#selectUser').on('change', function () {
+        console.log($(this).val());
+    });
+</script>
+<script>
+    $('#exit').click(function () {
+        window.location.href = '/';
+        return false;
+    })
+</script>
+<script>
+    $('#pullStatus').click(function () {
+        let id = $('#id-input').val();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + id + '/status/pull',
+            success: function () {
+                window.location.reload();
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+        return false;
+    })
+</script>
+<script>
+    $('#pushStatus').click(function () {
+        let id = $('#id-input').val();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + id + '/status/push',
+            success: function () {
+                window.location.reload();
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+        return false;
+    })
+</script>
+<script>
+    $('#cancel').click(function () {
+        let id = $('#id-input').val();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + id + '/status/cancel',
+            success: function () {
+                window.location.reload();
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+        return false;
+    })
+</script>
+<script>
+    $('#addNewProduct').click(function () {
+        let id = $('#id-input').val();
+        let product = $('#selectProducts').val();
+        let quantity = $('#selectQuantity').val();
+        $.ajax({
+            method: 'POST',
+            url: '/api/order/' + id + '/product/' + product,
+            data: {
+                quantity: quantity
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('.quantitySelect').click(function () {
+        let selected = $(this).find('.selectedQuantity').text();
+        for (let i = 1; i <= 10; i++) {
+            if (i.toString() === selected) {
+
+            } else {
+                $(this).append(`<option>${i}</option>`);
+            }
+        }
+    })
+</script>
+<script>
+    $('.quantitySelect').on('change', function () {
+        let orderId = $('#id-input').val();
+        let itemId = $(this).closest('tr').find('.itemId').text();
+        console.log();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + orderId + '/product/' + itemId,
+            data: {
+                quantity: $(this).val()
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('.deleteItem').click(function () {
+        let orderId = $('#id-input').val();
+        let itemId = $(this).closest('tr').find('.itemId').text()
+        $.ajax({
+            method: 'DELETE',
+            url: '/api/order/'+ orderId + '/product/' + itemId,
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('.addNewComment').click(function () {
+        let id = $('#id-input').val();
+        $.ajax({
+            method: 'POST',
+            url: '/api/order/' + id + '/comment',
+            data: {
+                text: $(this).closest('td').find('.newCommentText').val()
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('.deleteComment').click(function () {
+        let id = $(this).closest('tr').find('.commentId').text();
+        $.ajax({
+            method: 'DELETE',
+            url: '/api/comment/' + id,
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('.editComment').click(function () {
+        let id = $(this).closest('tr').find('.commentId').text();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/comment/' + id,
+            data: {
+                newText: $(this).closest('tr').find('.commentText').val()
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('#selectUser').on('change', function () {
+        let orderId = $('#id-input').val();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + orderId + '/user/',
+            data: {
+                userName: $(this).val()
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+<script>
+    $('#selectClient').on('change', function () {
+        let orderId = $('#id-input').val();
+        $.ajax({
+            method: 'PUT',
+            url: '/api/order/' + orderId + '/client/',
+            data: {
+                clientName: $(this).val()
+            },
+            success: function () {
+                window.location.reload()
+            },
+            error: function (error) {
+                alert(error.status + " ошибка: " + error.responseText);
+            }
+        });
+    })
+</script>
+</body>
+</html>
